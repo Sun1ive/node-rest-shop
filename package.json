@@ -1,0 +1,29 @@
+{
+  "name": "rest-shop",
+  "version": "1.0.0",
+  "description": "nodejs REST API by Academind",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sun1ive/node-rest-shop.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sun1ive/node-rest-shop/issues"
+  },
+  "homepage": "https://github.com/Sun1ive/node-rest-shop#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "eslint": "^4.12.1",
+    "eslint-cli": "^1.1.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.8.0"
+  }
+}
