@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Sun1ive/node-rest-shop#readme",
   "dependencies": {
+    "cors": "^2.8.4",
     "express": "^4.16.2",
     "morgan": "^1.9.0"
   },
