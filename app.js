@@ -8,6 +8,11 @@ const orderRoutes = require('./api/routes/orders');
 // using morgan package for logging
 app.use(morgan('dev'));
 
+
+// using bodyParser included in express
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 // Routes which should handle requests
 app.use('/products', productRoutes);
 app.use('/orders', orderRoutes);
