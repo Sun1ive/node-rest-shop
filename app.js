@@ -6,6 +6,17 @@ const app = express();
 const productRoutes = require('./api/routes/products');
 const orderRoutes = require('./api/routes/orders');
 
+const mongoose = require('mongoose');
+
+mongoose.connect(
+  `mongodb://node-shop:${
+    process.env.MONBO_ATLAS_PW
+  }@node-rest-shop-shard-00-00-3xfy1.mongodb.net:27017,node-rest-shop-shard-00-01-3xfy1.mongodb.net:27017,node-rest-shop-shard-00-02-3xfy1.mongodb.net:27017/test?ssl=true&replicaSet=node-rest-shop-shard-0&authSource=admin`,
+  {
+    useMongoClient: true,
+  },
+);
+
 // using morgan package for logging
 app.use(morgan('dev'));
 
@@ -14,18 +25,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // add cors
-// app.use(cors());
+app.use(cors());
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', '*');
 
-  if (req.method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-    return res.status(200).json({});
-  }
-  next();
-});
+//   if (req.method === 'OPTIONS') {
+//     res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+//     return res.status(200).json({});
+//   }
+//   next();
+// });
 
 // Routes which should handle requests
 app.use('/products', productRoutes);
