@@ -9,8 +9,8 @@ router.get('/', (req, res, next) => {
   Product.find()
     .exec()
     .then(docs => {
+      res.status(200).json(docs);
       // if (docs.length >= 0) {
-        res.status(200).json(docs);
       // } else {
       //   res.status(404).json({ message: 'No entries found' });
       // }
@@ -30,19 +30,14 @@ router.post('/', (req, res, next) => {
   product
     .save()
     .then(result => {
-      res.status(201).json({
+      res.status(200).json({
         message: 'Handling POST request to /products',
         createdProduct: result,
       });
     })
-    .catch(e => {
-      res.send(500).json({ error: e });
+    .catch(err => {
+      res.send(500).json({ error: err });
     });
-
-  res.status(201).json({
-    message: 'Handling POST request to /products',
-    createdProduct: product,
-  });
 });
 
 router.get('/:productId', (req, res, next) => {
@@ -50,7 +45,6 @@ router.get('/:productId', (req, res, next) => {
   Product.findById(id)
     .exec()
     .then(document => {
-      console.log('from db', document);
       if (document) {
         res.status(200).json(document);
       } else {
@@ -58,15 +52,22 @@ router.get('/:productId', (req, res, next) => {
       }
     })
     .catch(err => {
-      console.log(err);
       res.status(500).json({ error: err });
     });
 });
 
 router.patch('/:productId', (req, res, next) => {
-  res.status(200).json({
-    message: 'updated product!',
-  });
+  const id = req.params.productId;
+  const updateOps = {};
+
+  for (const ops of req.body) {
+    updateOps[ops.propName] = ops.value;
+  }
+
+  Product.update({ _id: id }, { $set: updateOps })
+    .exec()
+    .then(result => res.status(200).json(result))
+    .catch(err => res.status(500).json({ error: err }));
 });
 
 router.delete('/:productId', (req, res, next) => {
