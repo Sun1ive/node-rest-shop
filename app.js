@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 
 mongoose.connect(
   `mongodb://node-shop:${
-    process.env.MONBO_ATLAS_PW
+    process.env.MONGO_ATLAS_PW
   }@node-rest-shop-shard-00-00-3xfy1.mongodb.net:27017,node-rest-shop-shard-00-01-3xfy1.mongodb.net:27017,node-rest-shop-shard-00-02-3xfy1.mongodb.net:27017/test?ssl=true&replicaSet=node-rest-shop-shard-0&authSource=admin`,
   {
     useMongoClient: true,

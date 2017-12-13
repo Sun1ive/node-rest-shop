@@ -1,3 +1,3 @@
 git add .
-git commit -m 'make it better'
+git commit -m '(•̪●)'
 git push
