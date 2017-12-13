@@ -6,9 +6,18 @@ const Product = require('../models/product');
 const mongoose = require('mongoose');
 
 router.get('/', (req, res, next) => {
-  res.status(200).json({
-    message: 'Handling get request to /products',
-  });
+  Product.find()
+    .exec()
+    .then(docs => {
+      // if (docs.length >= 0) {
+        res.status(200).json(docs);
+      // } else {
+      //   res.status(404).json({ message: 'No entries found' });
+      // }
+    })
+    .catch(err => {
+      res.status(500).json({ error: err });
+    });
 });
 
 router.post('/', (req, res, next) => {
@@ -41,8 +50,12 @@ router.get('/:productId', (req, res, next) => {
   Product.findById(id)
     .exec()
     .then(document => {
-      console.log(document);
-      res.status(200).json(document);
+      console.log('from db', document);
+      if (document) {
+        res.status(200).json(document);
+      } else {
+        res.status(404).json({ message: 'Not valid request' });
+      }
     })
     .catch(err => {
       console.log(err);
@@ -57,9 +70,14 @@ router.patch('/:productId', (req, res, next) => {
 });
 
 router.delete('/:productId', (req, res, next) => {
-  res.status(200).json({
-    message: 'deleted product!',
-  });
+  const id = req.params.productId;
+
+  Product.remove({ _id: id })
+    .exec()
+    .then(result => {
+      res.status(200).json(result);
+    })
+    .catch(err => res.status(500).json({ error: err }));
 });
 
 module.exports = router;
