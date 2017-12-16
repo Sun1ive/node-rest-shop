@@ -47,8 +47,16 @@ router.post('/', (req, res, next) => {
     .save()
     .then(result => {
       res.status(200).json({
-        message: 'Handling POST request to /products',
-        createdProduct: result,
+        message: 'Product created successfully',
+        createdProduct: {
+          name: result.name,
+          price: result.price,
+          _id: result._id,
+          request: {
+            type: 'POST',
+            url: `http://localhost:8081/products/${result._id}`,
+          },
+        },
       });
     })
     .catch(err => {
@@ -60,9 +68,15 @@ router.get('/:productId', (req, res, next) => {
   const id = req.params.productId;
   Product.findById(id)
     .exec()
-    .then(document => {
-      if (document) {
-        res.status(200).json(document);
+    .then(doc => {
+      if (doc) {
+        res.status(200).json({
+          product: doc,
+          request: {
+            type: 'GET',
+            url: 'http://localhost:8081/products',
+          },
+        });
       } else {
         res.status(404).json({ message: 'Not valid request' });
       }
@@ -82,7 +96,15 @@ router.patch('/:productId', (req, res, next) => {
 
   Product.update({ _id: id }, { $set: updateOps })
     .exec()
-    .then(result => res.status(200).json(result))
+    .then(result =>
+      res.status(200).json({
+        message: 'Product updated!',
+        request: {
+          type: 'GET',
+          url: `http://localhost:8081/products${id}`,
+        },
+      }),
+    )
     .catch(err => res.status(500).json({ error: err }));
 });
 
@@ -92,7 +114,14 @@ router.delete('/:productId', (req, res, next) => {
   Product.remove({ _id: id })
     .exec()
     .then(result => {
-      res.status(200).json(result);
+      res.status(200).json({
+        message: 'Product deleted',
+        request: {
+          type: 'POST',
+          url: `http://localhost:8081/products`,
+          body: { name: 'String', price: 'Number ' },
+        },
+      });
     })
     .catch(err => res.status(500).json({ error: err }));
 });

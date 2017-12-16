@@ -16,6 +16,7 @@ mongoose.connect(
     useMongoClient: true,
   },
 );
+mongoose.Promise = global.Promise;
 
 // using morgan package for logging
 app.use(morgan('dev'));
