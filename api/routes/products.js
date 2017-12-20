@@ -5,7 +5,7 @@ const router = express.Router();
 const Product = require('../models/product');
 const mongoose = require('mongoose');
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
   Product.find()
     .select('name price _id')
     .exec()
@@ -32,7 +32,7 @@ router.get('/', (req, res, next) => {
     });
 });
 
-router.post('/', (req, res, next) => {
+router.post('/', (req, res) => {
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -60,7 +60,7 @@ router.post('/', (req, res, next) => {
     });
 });
 
-router.get('/:productId', (req, res, next) => {
+router.get('/:productId', (req, res) => {
   const id = req.params.productId;
   Product.findById(id)
     .exec()
@@ -92,7 +92,7 @@ router.patch('/:productId', (req, res, next) => {
 
   Product.update({ _id: id }, { $set: updateOps })
     .exec()
-    .then(result =>
+    .then(() =>
       res.status(200).json({
         message: 'Product updated!',
         request: {
@@ -104,12 +104,12 @@ router.patch('/:productId', (req, res, next) => {
     .catch(err => res.status(500).json({ error: err }));
 });
 
-router.delete('/:productId', (req, res, next) => {
+router.delete('/:productId', (req, res) => {
   const id = req.params.productId;
 
   Product.remove({ _id: id })
     .exec()
-    .then(result => {
+    .then(() => {
       res.status(200).json({
         message: 'Product deleted',
         request: {
