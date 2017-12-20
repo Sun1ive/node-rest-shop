@@ -26,10 +26,6 @@ router.get('/', (req, res, next) => {
       };
 
       res.status(200).json(response);
-      // if (docs.length >= 0) {
-      // } else {
-      //   res.status(404).json({ message: 'No entries found' });
-      // }
     })
     .catch(err => {
       res.status(500).json({ error: err });
