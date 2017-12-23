@@ -1,4 +1,5 @@
 const express = require('express');
+const _ = require('lodash');
 
 const router = express.Router();
 
@@ -84,7 +85,7 @@ router.get('/:productId', (req, res) => {
 
 router.patch('/:productId', (req, res) => {
   const id = req.params.productId;
-  const updateOps = {};
+  let updateOps = {};
 
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value;
