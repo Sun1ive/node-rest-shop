@@ -9,6 +9,7 @@ const Product = require('../models/product');
 router.get('/', (req, res) => {
   Order.find()
     .select('product quantity _id')
+    .populate('product', 'name')
     .exec()
     .then(result => {
       res.status(200).json({
@@ -26,6 +27,27 @@ router.get('/', (req, res) => {
     })
     .catch(err => {
       res.status(500).json(err);
+    });
+});
+
+router.get('/:orderId', (req, res) => {
+  Order.findById(req.params.orderId)
+    .populate('product', 'name')
+    .exec()
+    .then(order => {
+      if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+      res.status(200).json({
+        order,
+        reguest: {
+          type: 'GET',
+          url: `http://localhost:8081/order`,
+        },
+      });
+    })
+    .catch(err => {
+      res.status(500).json({ error: err });
     });
 });
 
@@ -62,26 +84,6 @@ router.post('/', (req, res) => {
         }),
       );
   });
-});
-
-router.get('/:orderId', (req, res) => {
-  Order.findById(req.params.orderId)
-    .exec()
-    .then(order => {
-      if (!order) {
-        return res.status(404).json({ message: 'Order not found' });
-      }
-      res.status(200).json({
-        order,
-        reguest: {
-          type: 'GET',
-          url: `http://localhost:8081/order`,
-        },
-      });
-    })
-    .catch(err => {
-      res.status(500).json({ error: err });
-    });
 });
 
 router.delete('/:orderId', (req, res) => {
