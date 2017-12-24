@@ -7,11 +7,26 @@ const storage = multer.diskStorage({
     cb(null, './uploads/');
   },
   filename(req, file, cb) {
-    cb(null, file.originalname);
+    cb(null, new Date().toDateString + file.originalname);
   },
 });
 
-const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  // reject or accept incoming file
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 1024 * 1024,
+  },
+  fileFilter,
+});
 
 const router = express.Router();
 
