@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
     cb(null, './uploads/');
   },
   filename(req, file, cb) {
-    cb(null, new Date().toDateString + file.originalname);
+    cb(null, file.originalname);
   },
 });
 
@@ -34,7 +34,7 @@ const Product = require('../models/product');
 
 router.get('/', (req, res) => {
   Product.find()
-    .select('name price _id')
+    .select('name price _id productImage')
     .exec()
     .then(docs => {
       const response = {
@@ -43,6 +43,7 @@ router.get('/', (req, res) => {
           return {
             name: doc.name,
             price: doc.price,
+            productImage: doc.productImage,
             _id: doc._id,
             request: {
               type: 'GET',
@@ -60,11 +61,11 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', upload.single('productImage'), (req, res) => {
-  console.log(req.file);
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     price: req.body.price,
+    productImage: req.file.path,
   });
 
   product
@@ -91,16 +92,11 @@ router.post('/', upload.single('productImage'), (req, res) => {
 router.get('/:productId', (req, res) => {
   const id = req.params.productId;
   Product.findById(id)
+    .select('name price _id productImage')
     .exec()
     .then(doc => {
       if (doc) {
-        res.status(200).json({
-          product: doc,
-          request: {
-            type: 'GET',
-            url: 'http://localhost:8081/products',
-          },
-        });
+        res.status(200).json({ product: doc, request: { type: 'GET', url: 'http://localhost:8081/products' } });
       } else {
         res.status(404).json({ message: 'Not valid request' });
       }
