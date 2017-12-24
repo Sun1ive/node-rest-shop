@@ -1,10 +1,21 @@
 const express = require('express');
-const _ = require('lodash');
+const multer = require('multer');
+const mongoose = require('mongoose');
+
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, './uploads/');
+  },
+  filename(req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const upload = multer({ storage });
 
 const router = express.Router();
 
 const Product = require('../models/product');
-const mongoose = require('mongoose');
 
 router.get('/', (req, res) => {
   Product.find()
@@ -33,7 +44,8 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', upload.single('productImage'), (req, res) => {
+  console.log(req.file);
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -85,7 +97,7 @@ router.get('/:productId', (req, res) => {
 
 router.patch('/:productId', (req, res) => {
   const id = req.params.productId;
-  let updateOps = {};
+  const updateOps = {};
 
   for (const ops of req.body) {
     updateOps[ops.propName] = ops.value;
