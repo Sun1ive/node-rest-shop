@@ -20,6 +20,7 @@ mongoose.Promise = global.Promise;
 
 // using morgan package for logging
 app.use(morgan('dev'));
+app.use('/uploads', express.static('uploads'))
 
 // using bodyParser included in express
 app.use(express.urlencoded({ extended: true }));

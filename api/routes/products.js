@@ -1,13 +1,40 @@
 const express = require('express');
+const multer = require('multer');
+const mongoose = require('mongoose');
+
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, './uploads/');
+  },
+  filename(req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  // reject or accept incoming file
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 1024 * 1024,
+  },
+  fileFilter,
+});
 
 const router = express.Router();
 
 const Product = require('../models/product');
-const mongoose = require('mongoose');
 
 router.get('/', (req, res) => {
   Product.find()
-    .select('name price _id')
+    .select('name price _id productImage')
     .exec()
     .then(docs => {
       const response = {
@@ -16,6 +43,7 @@ router.get('/', (req, res) => {
           return {
             name: doc.name,
             price: doc.price,
+            productImage: doc.productImage,
             _id: doc._id,
             request: {
               type: 'GET',
@@ -34,11 +62,12 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', (req, res) => {
+router.post('/', upload.single('productImage'), (req, res) => {
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     price: req.body.price,
+    productImage: req.file.path,
   });
 
   product
@@ -65,16 +94,11 @@ router.post('/', (req, res) => {
 router.get('/:productId', (req, res) => {
   const id = req.params.productId;
   Product.findById(id)
+    .select('name price _id productImage')
     .exec()
     .then(doc => {
       if (doc) {
-        res.status(200).json({
-          product: doc,
-          request: {
-            type: 'GET',
-            url: 'http://localhost:8081/products',
-          },
-        });
+        res.status(200).json({ product: doc, request: { type: 'GET', url: 'http://localhost:8081/products' } });
       } else {
         res.status(404).json({ message: 'Not valid request' });
       }
