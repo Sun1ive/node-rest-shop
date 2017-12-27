@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Sun1ive/node-rest-shop#readme",
   "dependencies": {
+    "bcrypt": "^1.0.3",
     "cors": "^2.8.4",
     "express": "^4.16.2",
     "mongoose": "^4.13.7",

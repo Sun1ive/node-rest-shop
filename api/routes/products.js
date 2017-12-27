@@ -28,7 +28,9 @@ router.get('/', (req, res) => {
       res.status(200).json(response);
     })
     .catch(err => {
-      res.status(500).json({ error: err });
+      res.status(500).json({
+        error: err,
+      });
     });
 });
 
@@ -115,7 +117,7 @@ router.delete('/:productId', (req, res) => {
         request: {
           type: 'POST',
           url: `http://localhost:8081/products`,
-          body: { name: 'String', price: 'Number ' },
+          body: { name: 'String', price: 'Number' },
         },
       });
     })
