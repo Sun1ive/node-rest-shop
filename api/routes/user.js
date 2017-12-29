@@ -16,7 +16,9 @@ router.post('/signup', (req, res) => {
           });
         }
         if (err) {
-          return res.status(500).json({ error: err });
+          return res.status(500).json({
+            error: err,
+          });
         }
         const USER = new User({
           _id: new mongoose.Types.ObjectId(),
@@ -27,7 +29,7 @@ router.post('/signup', (req, res) => {
           .then(result => {
             res.status(201).json({
               message: 'User Created!',
-              user: result
+              user: result,
             });
           })
           .catch(error =>
@@ -39,15 +41,50 @@ router.post('/signup', (req, res) => {
   });
 });
 
+router.post('/login', (req, res) => {
+  User.find({ email: req.body.email })
+    .exec()
+    .then(user => {
+      if (user.length < 1) {
+        return res.status(401).json({
+          message: 'Auth failed',
+        });
+      }
+      bcrypt.compare(req.body.password, user[0].password, (err, response) => {
+        if (err) {
+          return res.status(401).json({
+            message: 'Auth failed',
+          });
+        }
+        if (response) {
+          return res.status(200).json({
+            message: 'Auth successful',
+          });
+        }
+        return res.status(401).json({
+          message: 'Auth failed',
+        });
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err,
+      });
+    });
+});
+
 router.delete('/:userId', (req, res) => {
   User.remove({ _id: req.params.userId })
     .exec()
     .then(() => {
-      res.status(200).json({ message: 'User deleted' });
+      res.status(200).json({
+        message: 'User deleted',
+      });
     })
     .catch(err => {
-      console.log(err);
-      res.status(500).json({ error: err });
+      res.status(500).json({
+        error: err,
+      });
     });
 });
 
