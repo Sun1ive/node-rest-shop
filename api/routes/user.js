@@ -1,9 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 const User = require('../models/user');
+
+const JWT_KEY = 'Secret';
 
 router.post('/signup', (req, res) => {
   bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -57,8 +60,19 @@ router.post('/login', (req, res) => {
           });
         }
         if (response) {
+          const token = jwt.sign(
+            {
+              email: user[0].email,
+              userId: user[0]._id,
+            },
+            JWT_KEY,
+            {
+              expiresIn: '1h',
+            },
+          );
           return res.status(200).json({
             message: 'Auth successful',
+            token,
           });
         }
         return res.status(401).json({
