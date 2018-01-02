@@ -79,6 +79,7 @@ router.post('/login', (req, res) => {
           message: 'Auth failed',
         });
       });
+      // return undefined
     })
     .catch(err => {
       res.status(500).json({

@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const mongoose = require('mongoose');
+const checkAuth = require('../middleware/check-auth');
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
@@ -62,7 +63,7 @@ router.get('/', (req, res) => {
     });
 });
 
-router.post('/', upload.single('productImage'), (req, res) => {
+router.post('/', checkAuth, upload.single('productImage'), (req, res) => {
   const product = new Product({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
@@ -91,14 +92,16 @@ router.post('/', upload.single('productImage'), (req, res) => {
     });
 });
 
-router.get('/:productId', (req, res) => {
+router.get('/:productId', checkAuth, (req, res) => {
   const id = req.params.productId;
   Product.findById(id)
     .select('name price _id productImage')
     .exec()
     .then(doc => {
       if (doc) {
-        res.status(200).json({ product: doc, request: { type: 'GET', url: 'http://localhost:8081/products' } });
+        res
+          .status(200)
+          .json({ product: doc, request: { type: 'GET', url: 'http://localhost:8081/products' } });
       } else {
         res.status(404).json({ message: 'Not valid request' });
       }
@@ -108,7 +111,7 @@ router.get('/:productId', (req, res) => {
     });
 });
 
-router.patch('/:productId', (req, res) => {
+router.patch('/:productId', checkAuth, (req, res) => {
   const id = req.params.productId;
   const updateOps = {};
 
@@ -130,7 +133,7 @@ router.patch('/:productId', (req, res) => {
     .catch(err => res.status(500).json({ error: err }));
 });
 
-router.delete('/:productId', (req, res) => {
+router.delete('/:productId', checkAuth, (req, res) => {
   const id = req.params.productId;
 
   Product.remove({ _id: id })
