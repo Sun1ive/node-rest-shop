@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/Sun1ive/node-rest-shop#readme",
   "dependencies": {
-    "bcrypt": "^1.0.3",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.4",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.1.0",
